@@ -1,8 +1,8 @@
 {
-  "name": "blog",
-  "version": "0.3.0",
-  "description": "",
-  "author": "",
+  "name": "MMBlog-BE",
+  "version": "0.4.0",
+  "description": "Blog, resume and portfolio app - backend",
+  "author": "Mateusz Masek",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
