@@ -6,9 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './components/user/user.module';
 import { AuthModule } from './components/auth/auth.module';
 import dbConfiguration from '../src/config/db.config';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-// import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { AppService } from './app.service';
+import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './components/auth/guards';
 
 @Module({
@@ -33,10 +31,6 @@ import { AtGuard } from './components/auth/guards';
       provide: APP_GUARD,
       useClass: AtGuard,
     },
-    // {
-    // provide: APP_INTERCEPTOR,
-    // useClass: AuthInterceptor,
-    // }
   ],
 })
 export class AppModule {}

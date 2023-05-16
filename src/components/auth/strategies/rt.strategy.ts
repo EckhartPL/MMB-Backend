@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { ExtractJwt, Strategy } from "passport-jwt";
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -11,7 +11,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       ignoreExpiration: false, //false is default value
       secretOrKey: process.env.SECRET_RT,
       passReqToCallback: true,
-    })
+    });
   }
 
   validate(req: Request, payload: any) {
@@ -19,6 +19,6 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     return {
       ...payload,
       refreshToken,
-    }
+    };
   }
 }

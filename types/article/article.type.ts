@@ -1,4 +1,5 @@
 import { UserEntity } from 'src/components/user/entities/user.entity';
+
 export interface ArticleInterface {
   id: string;
   title: string;

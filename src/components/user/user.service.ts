@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
-import { UserObj } from 'types';
 import { v4 as uuid } from 'uuid';
 import { UserEntity } from './entities/user.entity';
 import { Response } from 'express';

@@ -19,7 +19,21 @@ import { HttpStatus } from '@nestjs/common/enums';
 
 @Controller('article')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) { }
+  constructor(private readonly articleService: ArticleService) {}
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('comments/:articleId')
+  async comments(@Param('articleId') articleId: string) {
+    return this.articleService.comments(articleId);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('comments-count/:articleId')
+  async commentsCounter(@Param('articleId') articleId: string) {
+    return this.articleService.commentsCounter(articleId);
+  }
 
   @Public()
   @HttpCode(HttpStatus.OK)

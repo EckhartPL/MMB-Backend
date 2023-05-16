@@ -1,6 +1,12 @@
-import { UserEntity } from "src/components/user/entities/user.entity";
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ArticleEntity } from "./article.entity";
+import { UserEntity } from 'src/components/user/entities/user.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ArticleEntity } from './article.entity';
 
 @Entity()
 export class CommentEntity extends BaseEntity {
