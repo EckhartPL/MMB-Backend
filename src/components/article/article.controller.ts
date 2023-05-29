@@ -1,68 +1,72 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-  Res,
-} from '@nestjs/common';
-import { ArticleService } from './article.service';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { GetPaginatedListOfArticlesResponse, LikeArticleId } from 'types';
-import { ValidatePagePipe } from 'src/pipes/validate-page.pipe';
-import { JwtAuthGuard } from 'src/components/auth/guards/jwt-auth.guard';
-import { Response } from 'express';
-import { GetCurrentUserId, Public } from 'src/decorators';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { HttpCode } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
+import { JwtAuthGuard } from 'src/components/auth/guards/jwt-auth.guard';
+import { GetCurrentUserId, Public } from 'src/decorators';
+import { ValidatePagePipe } from 'src/pipes/validate-page.pipe';
+import {
+  ArticleInterface,
+  CommentResponse,
+  GetPaginatedListOfArticlesResponse,
+  LikesResponse,
+  commentsCounterResponse,
+} from 'types';
+
+import { ArticleService } from './article.service';
+import { CommentService } from './comment.service';
+import { CreateArticleDto } from './dto/create-article.dto';
+import { LikeService } from './like.service';
 
 @Controller('article')
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly likeService: LikeService,
+    private readonly commentService: CommentService,
+  ) {}
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('comments/:articleId')
-  async comments(@Param('articleId') articleId: string) {
-    return this.articleService.comments(articleId);
+  comments(@Param('articleId') articleId: string): Promise<CommentResponse> {
+    return this.commentService.comments(articleId);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('comments-count/:articleId')
-  async commentsCounter(@Param('articleId') articleId: string) {
-    return this.articleService.commentsCounter(articleId);
+  commentsCounter(
+    @Param('articleId') articleId: string,
+  ): Promise<commentsCounterResponse> {
+    return this.commentService.commentsCounter(articleId);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Get('/:pageNumber')
-  async viewArticles(
+  viewArticles(
     @Param('pageNumber', ValidatePagePipe) pageNumber: number,
   ): Promise<GetPaginatedListOfArticlesResponse> {
-    return await this.articleService.viewArticles(pageNumber);
+    return this.articleService.viewArticles(pageNumber);
   }
 
   @Post('/')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  async createArticle(
+  createArticle(
     @Body() createArticle: CreateArticleDto,
-    @Res() res: Response,
     @GetCurrentUserId() userId: string,
-  ) {
-    return await this.articleService.createArticle(createArticle, userId, res);
+  ): Promise<ArticleInterface> {
+    return this.articleService.createArticle(createArticle, userId);
   }
 
-  @Post('/like')
+  @Post('/like/:likedArticleId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  async likeArticle(
+  likeArticle(
     @GetCurrentUserId() userId: string,
-    @Body() likedArticle: LikeArticleId,
-    @Res() res: Response,
-  ): Promise<void> {
-    return await this.articleService.like(userId, likedArticle, res);
+    @Param('likedArticleId') likedArticleId: string,
+  ): Promise<LikesResponse> {
+    return this.likeService.like(userId, likedArticleId);
   }
 }

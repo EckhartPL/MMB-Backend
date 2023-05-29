@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { CommentResponse, commentsCounterResponse } from 'types';
+
 import { CommentEntity } from './entities/comment.entity';
-import { CommentCounterResponse } from 'types';
 
 @Injectable()
 export class CommentService {
@@ -23,24 +24,21 @@ export class CommentService {
       .where('article.id = :id', { id: articleId })
       .orderBy('article.createdAt', 'DESC')
       .getManyAndCount();
-    Logger.log('items:', { items }, 'count:', count);
     return {
       items,
-      count,
+      pagesCount: count,
     };
   }
 
-  async commentsCounter(articleId: string): Promise<CommentCounterResponse> {
+  async commentsCounter(articleId: string): Promise<commentsCounterResponse> {
     const [, count] = await CommentEntity.createQueryBuilder('comment')
       .leftJoinAndSelect('comment.article', 'article')
       .select(['comment.id'])
       .where('article.id = :id', { id: articleId })
       .getManyAndCount();
 
-    Logger.log('count:', count);
-
     return {
-      count,
+      pagesCount: count,
     };
   }
 }

@@ -1,6 +1,6 @@
-import { ArticleEntity } from "src/components/article/entities/article.entity";
+import { ArticleEntity } from 'src/components/article/entities/article.entity';
 
-export type LikesResponse = {
-  likes: number,
-  article: boolean | ArticleEntity,
-};
+export interface LikesResponse {
+  likes: number;
+  article: ArticleEntity | boolean;
+}

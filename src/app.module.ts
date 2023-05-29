@@ -1,29 +1,25 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+
 import { AppController } from './app.controller';
 import { ArticleModule } from './components/article/article.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './components/user/user.module';
 import { AuthModule } from './components/auth/auth.module';
-import dbConfiguration from '../src/config/db.config';
-import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './components/auth/guards';
+import { UserModule } from './components/user/user.module';
+import { envValidationObjectSchema } from './config';
+import { DatabaseModule } from './database/database.module.';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [dbConfiguration],
-    }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        ...configService.get('database'),
-      }),
+      validationSchema: envValidationObjectSchema,
     }),
     ArticleModule,
     UserModule,
     AuthModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [

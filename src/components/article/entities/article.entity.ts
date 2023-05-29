@@ -13,7 +13,7 @@ import {
 import { ArticleInterface } from 'types';
 import { CommentEntity } from './comment.entity';
 
-@Entity()
+@Entity('articles')
 export class ArticleEntity extends BaseEntity implements ArticleInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;

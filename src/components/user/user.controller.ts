@@ -6,14 +6,14 @@ import {
   HttpStatus,
   Param,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetCurrentUserId } from 'src/decorators';
+
+import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
-import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -22,23 +22,25 @@ export class UserController {
   @Post('/upload')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('avatar'))
-  async profilePictureUpload(
+  profilePictureUpload(
     @UploadedFile() file: Express.Multer.File,
-    @Body() avatar: any,
+    @Body() avatar: unknown,
     @GetCurrentUserId() userId: string,
-  ) {
-    await this.userService.profilePictureUpload(file, userId);
+  ): Promise<string> {
+    return this.userService.profilePictureUpload(file, userId);
   }
 
   @Get('/upload/:userName')
   @HttpCode(HttpStatus.OK)
-  async getUser(@Param('userName') userName: string, @Res() res: Response) {
-    await this.userService.getUser(userName, res);
+  getUser(@Param('userName') userName: string): Promise<UserEntity> {
+    return this.userService.getUserByName(userName);
   }
 
   @Get('likedArticles')
   @HttpCode(HttpStatus.OK)
-  async getLikedArticlesIds(@GetCurrentUserId() userId: string) {
-    return await this.userService.getLikedArticlesIds(userId);
+  getLikedArticlesIds(
+    @GetCurrentUserId() userId: string,
+  ): Promise<string[]> {
+    return this.userService.getLikedArticlesIds(userId);
   }
 }

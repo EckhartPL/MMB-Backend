@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ArticleEntity } from './entities/article.entity';
-import { GetPaginatedListOfArticlesResponse } from 'types';
+import { DataSource } from 'typeorm';
+import { ArticleInterface, GetPaginatedListOfArticlesResponse } from 'types';
+
 import { CreateArticleDto } from './dto/create-article.dto';
+import { ArticleEntity } from './entities/article.entity';
+
 import { UserEntity } from '../user/entities/user.entity';
 
 @Injectable()
 export class ArticleService {
+  constructor(private readonly dataSource: DataSource) {}
+
   // eslint-disable-next-line max-lines-per-function
   async viewArticles(
     currentPage = 1,
@@ -16,7 +21,9 @@ export class ArticleService {
 
     const maxPerPage = 9;
 
-    const [items, count] = await ArticleEntity.createQueryBuilder('article')
+    const [items, count] = await this.dataSource
+      .createQueryBuilder()
+      .from(ArticleEntity, 'article')
       .leftJoinAndSelect('article.user', 'user')
       .skip(maxPerPage * (currentPage - 1))
       .take(maxPerPage)
@@ -48,14 +55,16 @@ export class ArticleService {
   async createArticle(
     createArticle: CreateArticleDto,
     userId: string,
-  ): Promise<boolean> {
+  ): Promise<ArticleInterface> {
     const article = new ArticleEntity();
     const user = await UserEntity.findOneBy({ id: userId });
     article.title = createArticle.title;
     article.description = createArticle.description;
     article.user = user;
-    await article.save();
+    return article.save();
+  }
 
-    return { ok: true };
+  async getArticleById(articleId: string): Promise<ArticleEntity> {
+    return ArticleEntity.findOneBy({ id: articleId });
   }
 }

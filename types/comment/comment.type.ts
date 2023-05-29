@@ -2,9 +2,10 @@ import { CommentEntity } from 'src/components/article/entities/comment.entity';
 
 export interface CommentResponse {
   items: CommentEntity[];
-  count: number;
+  pagesCount?: number;
+  currentPage?: number;
 }
 
-export interface CommentCounterResponse {
-  count: number;
+export interface commentsCounterResponse {
+  pagesCount?: number;
 }

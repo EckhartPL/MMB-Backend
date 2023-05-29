@@ -1,36 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../user/entities/user.entity';
-import { ArticleEntity } from './entities/article.entity';
-import { LikeArticleId } from 'types';
-import { LikesResponse } from 'types/likes/likes.response';
+import { Injectable, Logger } from '@nestjs/common';
+import { LikesResponse } from 'types';
+
+import { ArticleService } from './article.service';
+
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class LikeService {
-  async like(userId: string, likedArticle: LikeArticleId): Promise<LikesResponse> {
-    const user = await UserEntity.findOne({
-      where: {
-        id: userId,
-      },
-      relations: ['likedArticles'],
-    });
-    const article = await ArticleEntity.findOneBy({
-      id: likedArticle.likedArticle,
-    });
+  constructor(
+    private readonly userService: UserService,
+    private readonly articleService: ArticleService,
+  ) {}
 
-    if (!user) {
-      return null;
-    }
+  async like(userId: string, likedArticleId: string): Promise<LikesResponse> {
+    const user = await this.userService.getUserById(userId);
+    const article = await this.articleService.getArticleById(likedArticleId);
+
     if (user.likedArticles.some((el) => el.id === article.id)) {
-      await UserEntity.createQueryBuilder('user')
-        .relation(UserEntity, 'likedArticles')
-        .of(userId)
-        .remove(likedArticle.likedArticle);
+      await this.userService.removeLikedArticleQuery(userId, likedArticleId);
       article.likes--;
       await article.save();
       return {
         likes: article.likes,
         article: null,
-      }
+      };
     }
     user.likedArticles.push(article);
     article.likes++;

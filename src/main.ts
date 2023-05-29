@@ -1,13 +1,19 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import * as cookieParser from 'cookie-parser';
+import { SwaggerModule } from '@nestjs/swagger';
 
-async function bootstrap() {
+import { AppModule } from './app.module';
+import { corsOptions, swaggerConfig } from './config';
+
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.use(cookieParser());
-  // const reflector = new Reflector();
-  // app.useGlobalGuards(new AtGuard(reflector));
-  await app.listen(3001);
+  app.enableCors(corsOptions);
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
+
+  const configService = app.get(ConfigService);
+  const PORT = configService.get('PORT');
+  await app.listen(PORT || 3001);
 }
 bootstrap();

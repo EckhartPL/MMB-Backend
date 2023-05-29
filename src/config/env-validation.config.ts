@@ -1,0 +1,22 @@
+import * as Joi from 'joi';
+export const envValidationObjectSchema = Joi.object({
+  DB_HOST: Joi.string().required(),
+  DB_PORT: Joi.number().required(),
+  DB_USERNAME: Joi.string().required(),
+  DB_DATABASE: Joi.string().required(),
+  DB_SYNCHRONIZE: Joi.boolean().required(),
+  DB_LOGGING: Joi.boolean().required(),
+  PORT: Joi.number().required(),
+  CLIENT_URL: Joi.string().required(),
+  SECRET_OR_KEY: Joi.string().required(),
+  HASH_PWD: Joi.string().required(),
+  SECRET_AT: Joi.string().required(),
+  SECRET_RT: Joi.string().required(),
+  AWS_ID: Joi.string().required(),
+  AWS_SECRET: Joi.string().required(),
+  AWS_BUCKET_NAME: Joi.string().required(),
+  AWS_DB_HOST: Joi.string().required(),
+  AWS_DB_USER: Joi.string().required(),
+  AWS_DB_NAME: Joi.string().required(),
+  AWS_DB_PASS: Joi.string().required(),
+});
