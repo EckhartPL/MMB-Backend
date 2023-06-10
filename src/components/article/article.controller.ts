@@ -5,11 +5,10 @@ import { JwtAuthGuard } from 'src/components/auth/guards/jwt-auth.guard';
 import { GetCurrentUserId, Public } from 'src/decorators';
 import { ValidatePagePipe } from 'src/pipes/validate-page.pipe';
 import {
-  ArticleInterface,
   CommentResponse,
-  GetPaginatedListOfArticlesResponse,
   LikesResponse,
-  commentsCounterResponse,
+  CommentsCounterResponse,
+  GetPaginatedListOfArticlesResponse,
 } from 'types';
 
 import { ArticleService } from './article.service';
@@ -37,7 +36,7 @@ export class ArticleController {
   @Get('comments-count/:articleId')
   commentsCounter(
     @Param('articleId') articleId: string,
-  ): Promise<commentsCounterResponse> {
+  ): Promise<CommentsCounterResponse> {
     return this.commentService.commentsCounter(articleId);
   }
 
@@ -56,7 +55,7 @@ export class ArticleController {
   createArticle(
     @Body() createArticle: CreateArticleDto,
     @GetCurrentUserId() userId: string,
-  ): Promise<ArticleInterface> {
+  ): Promise<void> {
     return this.articleService.createArticle(createArticle, userId);
   }
 

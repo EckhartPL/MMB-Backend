@@ -56,8 +56,12 @@ export class UserService {
   }
 
   async getLikedArticlesIds(userId: string): Promise<string[]> {
-    return (await UserEntity.findOne({ where: { id: userId }, relations: { likedArticles: true } }))
-    .likedArticles.map(likedArticle => likedArticle.id);
+    return (
+      await UserEntity.findOne({
+        where: { id: userId },
+        relations: { likedArticles: true },
+      })
+    ).likedArticles.map((likedArticle) => likedArticle.id);
   }
 
   async removeLikedArticleQuery(

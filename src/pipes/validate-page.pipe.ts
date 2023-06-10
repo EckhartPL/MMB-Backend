@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   PipeTransform,
 } from '@nestjs/common';
 import { ArticleService } from 'src/components/article/article.service';
@@ -10,7 +11,8 @@ import { ArticleService } from 'src/components/article/article.service';
 @Injectable()
 export class ValidatePagePipe implements PipeTransform {
   constructor(@Inject(ArticleService) private articleService: ArticleService) {}
-  async transform(value: any, metadata: ArgumentMetadata): Promise<number> {
+  async transform(value: unknown, metadata: ArgumentMetadata): Promise<number> {
+    Logger.log(metadata);
     const { pagesCount } = await this.articleService.viewArticles();
     const page = Number(value);
 

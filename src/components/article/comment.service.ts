@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CommentResponse, commentsCounterResponse } from 'types';
+import { DataSource } from 'typeorm';
+import { CommentResponse, CommentsCounterResponse } from 'types';
 
 import { CommentEntity } from './entities/comment.entity';
 
 @Injectable()
 export class CommentService {
+  constructor(private readonly dataSource: DataSource) {}
+  // # Write a method that adds comments to an article
+
+  // eslint-disable-next-line max-lines-per-function
   async comments(articleId: string): Promise<CommentResponse> {
-    const [items, count] = await CommentEntity.createQueryBuilder('comment')
+    const [items, count] = await this.dataSource
+      .createQueryBuilder()
+      .from(CommentEntity, 'comment')
       .leftJoinAndSelect('comment.user', 'user')
       .leftJoinAndSelect('comment.article', 'article')
       .select([
@@ -30,15 +37,17 @@ export class CommentService {
     };
   }
 
-  async commentsCounter(articleId: string): Promise<commentsCounterResponse> {
-    const [, count] = await CommentEntity.createQueryBuilder('comment')
+  async commentsCounter(articleId: string): Promise<CommentsCounterResponse> {
+    const [, count] = await this.dataSource
+      .createQueryBuilder()
+      .from(CommentEntity, 'comment')
       .leftJoinAndSelect('comment.article', 'article')
       .select(['comment.id'])
       .where('article.id = :id', { id: articleId })
       .getManyAndCount();
 
     return {
-      pagesCount: count,
+      articleCommentsQuantity: count,
     };
   }
 }

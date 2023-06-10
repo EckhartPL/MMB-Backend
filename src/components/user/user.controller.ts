@@ -38,9 +38,7 @@ export class UserController {
 
   @Get('likedArticles')
   @HttpCode(HttpStatus.OK)
-  getLikedArticlesIds(
-    @GetCurrentUserId() userId: string,
-  ): Promise<string[]> {
+  getLikedArticlesIds(@GetCurrentUserId() userId: string): Promise<string[]> {
     return this.userService.getLikedArticlesIds(userId);
   }
 }

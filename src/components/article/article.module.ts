@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 import { CommentService } from './comment.service';
+import { ArticleEntity } from './entities/article.entity';
+import { CommentEntity } from './entities/comment.entity';
 import { LikeService } from './like.service';
 
-import { UserService } from '../user/user.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ArticleEntity } from './entities/article.entity';
 import { UserEntity } from '../user/entities/user.entity';
-import { CommentEntity } from './entities/comment.entity';
+import { UserService } from '../user/user.service';
 
 @Module({
   imports: [

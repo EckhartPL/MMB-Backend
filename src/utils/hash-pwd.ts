@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 
-export const hashPwd = (p: string) => {
+export const hashPwd = (p: string): string => {
   const hmac = crypto.createHmac('sha512', process.env.HASH_PWD);
   hmac.update(p);
   return hmac.digest('hex');

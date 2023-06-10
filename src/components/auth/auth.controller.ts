@@ -1,11 +1,13 @@
 import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginResponse, Tokens } from 'types';
-import { AuthLoginDto } from './dto/auth-login.dto';
-import { RegisterDto } from '../user/dto/register.dto';
-import { RtGuard } from './guards';
-import { GetCurrentUser, GetCurrentUserId, Public } from 'src/decorators';
 import { HttpStatus } from '@nestjs/common';
+import { GetCurrentUser, GetCurrentUserId, Public } from 'src/decorators';
+import { LoginResponse, Tokens } from 'types';
+
+import { AuthService } from './auth.service';
+import { AuthLoginDto } from './dto/auth-login.dto';
+import { RtGuard } from './guards';
+
+import { RegisterDto } from '../user/dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,13 +23,13 @@ export class AuthController {
   @Public()
   @Post('/login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: AuthLoginDto): Promise<LoginResponse> {
+  login(@Body() loginDto: AuthLoginDto): Promise<LoginResponse> {
     return this.authService.login(loginDto);
   }
 
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: string) {
+  logout(@GetCurrentUserId() userId: string): Promise<void | null> {
     return this.authService.logout(userId);
   }
 

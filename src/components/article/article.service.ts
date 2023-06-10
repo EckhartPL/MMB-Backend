@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { ArticleInterface, GetPaginatedListOfArticlesResponse } from 'types';
+import { GetPaginatedListOfArticlesResponse } from 'types';
 
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entities/article.entity';
@@ -15,10 +15,7 @@ export class ArticleService {
   async viewArticles(
     currentPage = 1,
   ): Promise<GetPaginatedListOfArticlesResponse> {
-    if (currentPage < 1) {
-      currentPage = 1;
-    }
-
+    currentPage < 1 ? (currentPage = 1) : currentPage;
     const maxPerPage = 9;
 
     const [items, count] = await this.dataSource
@@ -40,31 +37,26 @@ export class ArticleService {
       .orderBy('article.createdAt', 'DESC')
       .getManyAndCount();
 
-    const pagesCount = Math.ceil(count / maxPerPage);
-
-    if (currentPage > count) {
-      currentPage = 1;
-    }
     return {
       items,
-      pagesCount,
-      currentPage,
+      pagesCount: Math.ceil(count / maxPerPage),
+      currentPage: currentPage > count ? (currentPage = 1) : currentPage,
     };
   }
 
   async createArticle(
-    createArticle: CreateArticleDto,
+    { title, description }: CreateArticleDto,
     userId: string,
-  ): Promise<ArticleInterface> {
-    const article = new ArticleEntity();
+  ): Promise<void> {
     const user = await UserEntity.findOneBy({ id: userId });
-    article.title = createArticle.title;
-    article.description = createArticle.description;
-    article.user = user;
-    return article.save();
+    await ArticleEntity.create({
+      title,
+      description,
+      user,
+    }).save();
   }
 
-  async getArticleById(articleId: string): Promise<ArticleEntity> {
+  getArticleById(articleId: string): Promise<ArticleEntity> {
     return ArticleEntity.findOneBy({ id: articleId });
   }
 }

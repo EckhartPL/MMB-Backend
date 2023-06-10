@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
+import * as argon from 'argon2';
 import { UserEntity } from 'src/components/user/entities/user.entity';
 import { hashPwd } from 'src/utils/hash-pwd';
-import { LoginResponse, Tokens } from 'types';
-import { RegisterDto } from '../user/dto/register.dto';
+import { LoginResponse, Tokens, UserObj } from 'types';
+
 import { AuthLoginDto } from './dto/auth-login.dto';
-import * as argon from 'argon2';
+
+import { RegisterDto } from '../user/dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await UserEntity.findOne({ where: { email: email } });
+  async validateUser(email: string, pass: string): Promise<UserObj | null> {
+    const user = await UserEntity.findOneBy({ email });
     const hashedPwd = hashPwd(pass);
     if (user && user.pwdHash === hashedPwd) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { pwdHash, ...result } = user;
       return result;
     }
@@ -48,6 +51,7 @@ export class AuthService {
     };
   }
 
+  // eslint-disable-next-line max-lines-per-function
   async getTokens(userId: string, email: string): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
@@ -94,7 +98,7 @@ export class AuthService {
     return tokens;
   }
 
-  async logout(userId: string) {
+  async logout(userId: string): Promise<void | null> {
     const user = await UserEntity.findOneBy({ id: userId });
     if (user.hashedRt) {
       user.hashedRt = null;
@@ -103,7 +107,7 @@ export class AuthService {
     return null;
   }
 
-  async updateRtHash(userId: string, rt: string) {
+  async updateRtHash(userId: string, rt: string): Promise<void> {
     const hash = await argon.hash(rt);
     const user = await UserEntity.findOneBy({ id: userId });
     user.hashedRt = hash;
@@ -123,7 +127,12 @@ export class AuthService {
     return tokens;
   }
 
-  decodeToken(token): any {
+  decodeToken(token: string):
+    | null
+    | {
+        [key: string]: unknown;
+      }
+    | string {
     return this.jwtService.decode(token);
   }
 }

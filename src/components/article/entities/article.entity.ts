@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ArticleInterface } from 'types';
+
 import { CommentEntity } from './comment.entity';
 
 @Entity('articles')

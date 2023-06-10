@@ -1,11 +1,12 @@
-import { ArticleEntity } from 'src/components/article/entities/article.entity';
+import { ArticleEntity, CommentEntity } from 'src/components/article/entities';
 
 export interface UserObj {
   id?: string;
-  email: string;
   name: string;
+  email: string;
   profilePictureUrl?: string;
   likedArticles?: ArticleEntity[];
+  comments?: CommentEntity[];
 }
 
 export interface UserInterface {
@@ -15,9 +16,4 @@ export interface UserInterface {
   pwdHash: string;
   profilePictureUrl: string;
   likedArticles: ArticleEntity[];
-}
-
-export interface RegisterUserResponse {
-  id: string;
-  email: string;
 }

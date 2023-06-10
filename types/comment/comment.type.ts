@@ -6,6 +6,6 @@ export interface CommentResponse {
   currentPage?: number;
 }
 
-export interface commentsCounterResponse {
-  pagesCount?: number;
+export interface CommentsCounterResponse {
+  articleCommentsQuantity: number;
 }

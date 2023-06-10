@@ -9,22 +9,6 @@ export interface ArticleInterface {
   user: UserEntity;
 }
 
-export interface GetPaginatedListOfArticlesResponse {
-  items: ArticleInterface[];
-  pagesCount: number;
-  currentPage: number;
-}
-
-export interface CreateArticleResponse {
-  title: string;
-  description: string;
-}
-
 export interface LikeArticleId {
   likedArticle: string;
-}
-
-export interface ArticleLikeResponse {
-  likes: number;
-  likeFlag: boolean;
 }

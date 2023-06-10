@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { AppController } from './app.controller';
+import { GlobalExceptionFilter, GlobalResponseInterceptor } from './common';
 import { ArticleModule } from './components/article/article.module';
 import { AuthModule } from './components/auth/auth.module';
 import { AtGuard } from './components/auth/guards';
@@ -26,6 +27,14 @@ import { DatabaseModule } from './database/database.module.';
     {
       provide: APP_GUARD,
       useClass: AtGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GlobalResponseInterceptor,
     },
   ],
 })
