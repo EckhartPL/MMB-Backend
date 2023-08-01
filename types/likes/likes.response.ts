@@ -1,6 +1,8 @@
-import { ArticleEntity } from 'src/components/article/entities/article.entity';
+import { ArticleEntity } from 'src/modules/article/entities/article.entity';
+import { UserResponse } from 'types/user';
 
 export interface LikesResponse {
-  likes: number;
-  article: ArticleEntity | boolean;
+  article: ArticleEntity;
+  user: UserResponse;
+  isLiked: boolean;
 }

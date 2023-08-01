@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
-import { HttpCode } from '@nestjs/common/decorators';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
-import { JwtAuthGuard } from 'src/components/auth/guards/jwt-auth.guard';
-import { GetCurrentUserId, Public } from 'src/decorators';
-import { ValidatePagePipe } from 'src/pipes/validate-page.pipe';
 import {
   CommentResponse,
   LikesResponse,
-  CommentsCounterResponse,
   GetPaginatedListOfArticlesResponse,
 } from 'types';
 
@@ -15,6 +18,10 @@ import { ArticleService } from './article.service';
 import { CommentService } from './comment.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { LikeService } from './like.service';
+
+import { GetCurrentUserId, Public } from '../../decorators';
+import { ValidatePagePipe } from '../../pipes/validate-page.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('article')
 export class ArticleController {
@@ -33,11 +40,9 @@ export class ArticleController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
-  @Get('comments-count/:articleId')
-  commentsCounter(
-    @Param('articleId') articleId: string,
-  ): Promise<CommentsCounterResponse> {
-    return this.commentService.commentsCounter(articleId);
+  @Get('comments/count/:articleId')
+  commentsCounter(@Param('articleId') articleId: string): Promise<number> {
+    return this.commentService.commentsCount(articleId);
   }
 
   @Public()
@@ -49,7 +54,7 @@ export class ArticleController {
     return this.articleService.viewArticles(pageNumber);
   }
 
-  @Post('/')
+  @Post('/add')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   createArticle(

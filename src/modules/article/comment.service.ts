@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { CommentResponse, CommentsCounterResponse } from 'types';
+import { CommentResponse } from 'types';
 
 import { CommentEntity } from './entities/comment.entity';
 
@@ -37,7 +37,7 @@ export class CommentService {
     };
   }
 
-  async commentsCounter(articleId: string): Promise<CommentsCounterResponse> {
+  async commentsCount(articleId: string): Promise<number> {
     const [, count] = await this.dataSource
       .createQueryBuilder()
       .from(CommentEntity, 'comment')
@@ -46,8 +46,6 @@ export class CommentService {
       .where('article.id = :id', { id: articleId })
       .getManyAndCount();
 
-    return {
-      articleCommentsQuantity: count,
-    };
+    return count;
   }
 }

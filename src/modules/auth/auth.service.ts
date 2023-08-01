@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { ForbiddenException } from '@nestjs/common/exceptions';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
-import { UserEntity } from 'src/components/user/entities/user.entity';
+import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { hashPwd } from 'src/utils/hash-pwd';
 import { LoginResponse, Tokens, UserObj } from 'types';
 
@@ -37,17 +36,14 @@ export class AuthService {
 
     if (!user) throw new ForbiddenException('Access Denied!');
     this.validateUser(dto.email, dto.password);
+    delete user.pwdHash;
+    delete user.hashedRt;
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return {
       tokens,
-      user: {
-        email: user.email,
-        name: user.name,
-        profilePictureUrl: user.profilePictureUrl,
-        likedArticles: user.likedArticles,
-      },
+      user,
     };
   }
 
@@ -107,7 +103,7 @@ export class AuthService {
     return null;
   }
 
-  async updateRtHash(userId: string, rt: string): Promise<void> {
+  private async updateRtHash(userId: string, rt: string): Promise<void> {
     const hash = await argon.hash(rt);
     const user = await UserEntity.findOneBy({ id: userId });
     user.hashedRt = hash;

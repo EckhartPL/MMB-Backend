@@ -19,8 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "console:dev": "npm run build && npm run console",
-    "console": "node dist/console.js"
+    "console:dev": "pnpm run build && pnpm run console",
+    "console": "node dist/console.js",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -36,7 +37,10 @@
     "@types/passport-local": "^1.0.34",
     "argon2": "^0.30.3",
     "aws-sdk": "^2.1325.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
+    "firebase": "^10.1.0",
     "joi": "^17.9.2",
     "mysql2": "^2.3.3",
     "passport": "^0.6.0",
@@ -57,6 +61,7 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^16.0.0",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
@@ -65,7 +70,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-standard": "^5.0.0",
     "jest": "28.1.2",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",

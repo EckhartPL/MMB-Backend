@@ -1,4 +1,3 @@
-import { UserEntity } from 'src/components/user/entities/user.entity';
 import {
   BaseEntity,
   Column,
@@ -8,6 +7,8 @@ import {
 } from 'typeorm';
 
 import { ArticleEntity } from './article.entity';
+
+import { UserEntity } from '../../../modules/user/entities/user.entity';
 
 @Entity()
 export class CommentEntity extends BaseEntity {

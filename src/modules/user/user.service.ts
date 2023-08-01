@@ -1,35 +1,37 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
+import { DataSource } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { createWriteStream } from 'fs';
+import { extname } from 'path';
 
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  async profilePictureUpload(
+  constructor(private readonly dataSource: DataSource) {}
+  async uploadProfilePicture(
     file: Express.Multer.File,
     userId: string,
-  ): Promise<string> {
-    const s3 = new AWS.S3({
-      accessKeyId: process.env.AWS_ID,
-      secretAccessKey: process.env.AWS_SECRET,
-    });
-    const extension = file.originalname.split('.').pop();
-    const filename = `${uuid()}.${extension}`;
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `avatars/${filename}`,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-      ACL: 'public-read',
-    };
-    const data = await s3.upload(params).promise();
-    const user = await UserEntity.findOneByOrFail({ id: userId });
-    if (user) {
-      user.profilePictureUrl = data.Location;
-      await user.save();
-    }
-    return data.Location;
+  ): Promise<UserEntity> {
+    const user = await this.getUserById(userId);
+    const extension = extname(file.originalname);
+    const fileName = `${uuid()}${extension}`;
+    const uploadPath = `./uploads/${fileName}`;
+
+    return new Promise((resolve, reject) =>
+      createWriteStream(uploadPath)
+        .on('finish', () => {
+          // Update the user's profilePicture property with the new filename
+          user.profilePictureUrl = fileName;
+          resolve(user);
+        })
+        .on('error', (error) => {
+          // Handle the error appropriately
+          reject(error);
+        })
+        .end(file.buffer),
+    );
   }
 
   async getUserByName(username: string): Promise<UserEntity> {
@@ -62,15 +64,5 @@ export class UserService {
         relations: { likedArticles: true },
       })
     ).likedArticles.map((likedArticle) => likedArticle.id);
-  }
-
-  async removeLikedArticleQuery(
-    userId: string,
-    likedArticle: string,
-  ): Promise<void> {
-    await UserEntity.createQueryBuilder('user')
-      .relation(UserEntity, 'likedArticles')
-      .of(userId)
-      .remove(likedArticle);
   }
 }

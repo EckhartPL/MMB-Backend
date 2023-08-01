@@ -12,26 +12,36 @@ export class LikeService {
     private readonly articleService: ArticleService,
   ) {}
 
+  // eslint-disable-next-line max-lines-per-function
   async like(userId: string, likedArticleId: string): Promise<LikesResponse> {
-    const user = await this.userService.getUserById(userId);
     const article = await this.articleService.getArticleById(likedArticleId);
+    const user = await this.userService.getUserById(userId);
 
     if (user.likedArticles.some((el) => el.id === article.id)) {
-      await this.userService.removeLikedArticleQuery(userId, likedArticleId);
+      const newLikedArticles = user.likedArticles.filter((el) => {
+        return el.id !== article.id;
+      });
+      user.likedArticles = newLikedArticles;
+      await user.save();
       article.likes--;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { pwdHash, hashedRt, ...filteredUser } = user;
       await article.save();
       return {
-        likes: article.likes,
-        article: null,
+        article,
+        user: filteredUser,
+        isLiked: false,
       };
     }
     user.likedArticles.push(article);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { pwdHash, hashedRt, ...filteredUser } = user;
     article.likes++;
-    await user.save();
-    await article.save();
+    await Promise.all([user.save(), article.save()]);
     return {
-      likes: article.likes,
       article,
+      user: filteredUser,
+      isLiked: true,
     };
   }
 }

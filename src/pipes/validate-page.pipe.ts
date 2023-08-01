@@ -6,7 +6,7 @@ import {
   Logger,
   PipeTransform,
 } from '@nestjs/common';
-import { ArticleService } from 'src/components/article/article.service';
+import { ArticleService } from 'src/modules/article/article.service';
 
 @Injectable()
 export class ValidatePagePipe implements PipeTransform {

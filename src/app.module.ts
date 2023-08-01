@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { AppController } from './app.controller';
-import { GlobalExceptionFilter, GlobalResponseInterceptor } from './common';
-import { ArticleModule } from './components/article/article.module';
-import { AuthModule } from './components/auth/auth.module';
-import { AtGuard } from './components/auth/guards';
-import { UserModule } from './components/user/user.module';
+import { GlobalResponseInterceptor } from './common';
 import { envValidationObjectSchema } from './config';
 import { DatabaseModule } from './database/database.module.';
+import { ArticleModule } from './modules/article/article.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AtGuard } from './modules/auth/guards';
+import { UploadModule } from './modules/upload/upload.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DatabaseModule } from './database/database.module.';
     UserModule,
     AuthModule,
     DatabaseModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [
@@ -28,10 +30,10 @@ import { DatabaseModule } from './database/database.module.';
       provide: APP_GUARD,
       useClass: AtGuard,
     },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GlobalExceptionFilter,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: GlobalResponseInterceptor,

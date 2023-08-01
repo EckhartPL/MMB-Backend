@@ -1,5 +1,3 @@
-import { ArticleEntity } from 'src/components/article/entities/article.entity';
-import { CommentEntity } from 'src/components/article/entities/comment.entity';
 import {
   BaseEntity,
   Column,
@@ -10,6 +8,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserInterface } from 'types/user';
+
+import {
+  ArticleEntity,
+  CommentEntity,
+} from '../../../modules/article/entities';
 
 @Entity()
 export class UserEntity extends BaseEntity implements UserInterface {
@@ -46,10 +49,10 @@ export class UserEntity extends BaseEntity implements UserInterface {
 
   @ManyToMany(() => ArticleEntity, (entity) => entity.likedBy)
   @JoinTable()
-  likedArticles: ArticleEntity[];
+  likedArticles?: ArticleEntity[];
 
   @OneToMany(() => CommentEntity, (comment) => comment.user)
-  comments: CommentEntity[];
+  comments?: CommentEntity[];
 
   @OneToMany(() => ArticleEntity, (article) => article.user)
   article?: ArticleEntity[];

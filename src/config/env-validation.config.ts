@@ -12,11 +12,6 @@ export const envValidationObjectSchema = Joi.object({
   HASH_PWD: Joi.string().required(),
   SECRET_AT: Joi.string().required(),
   SECRET_RT: Joi.string().required(),
-  AWS_ID: Joi.string().required(),
-  AWS_SECRET: Joi.string().required(),
-  AWS_BUCKET_NAME: Joi.string().required(),
-  AWS_DB_HOST: Joi.string().required(),
-  AWS_DB_USER: Joi.string().required(),
-  AWS_DB_NAME: Joi.string().required(),
-  AWS_DB_PASS: Joi.string().required(),
+  MAX_FILE_SIZE: Joi.number().required(),
+  UPLOAD_TEMP_DIR: Joi.string().required(),
 });

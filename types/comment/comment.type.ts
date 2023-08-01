@@ -1,4 +1,4 @@
-import { CommentEntity } from 'src/components/article/entities/comment.entity';
+import { CommentEntity } from '../../src/modules/article/entities/comment.entity';
 
 export interface CommentResponse {
   items: CommentEntity[];
@@ -6,6 +6,6 @@ export interface CommentResponse {
   currentPage?: number;
 }
 
-export interface CommentsCounterResponse {
-  articleCommentsQuantity: number;
+export interface CommentsCountResponse {
+  commentsCount: number;
 }

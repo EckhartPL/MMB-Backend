@@ -1,4 +1,4 @@
-import { ArticleInterface } from "types";
+import { ArticleInterface } from 'types';
 
 export interface GetPaginatedListOfArticlesResponse {
   items: ArticleInterface[];
