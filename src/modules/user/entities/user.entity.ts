@@ -1,11 +1,15 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UserInterface } from 'types/user';
 
@@ -13,6 +17,7 @@ import {
   ArticleEntity,
   CommentEntity,
 } from '../../../modules/article/entities';
+import { UploadEntity } from '../../../modules/upload/entities';
 
 @Entity()
 export class UserEntity extends BaseEntity implements UserInterface {
@@ -35,15 +40,13 @@ export class UserEntity extends BaseEntity implements UserInterface {
     length: 255,
   })
   name: string;
-  @Column({
-    nullable: true,
-    default: null,
-  })
-  profilePictureUrl: string;
-  @Column({
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  modifiedAt: Date;
+
   @Column()
   hashedRt?: string;
 
@@ -56,4 +59,8 @@ export class UserEntity extends BaseEntity implements UserInterface {
 
   @OneToMany(() => ArticleEntity, (article) => article.user)
   article?: ArticleEntity[];
+
+  @OneToOne(() => UploadEntity, (uploads) => uploads.user)
+  @JoinColumn()
+  profilePicture: UploadEntity;
 }

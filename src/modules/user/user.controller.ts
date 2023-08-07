@@ -1,19 +1,12 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
-import { GetCurrentUserId } from 'src/decorators';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 
-import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
+
+import { GetCurrentUserId } from '../../decorators';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get('/upload/:userName')
-  @HttpCode(HttpStatus.OK)
-  getUser(@Param('userName') userName: string): Promise<UserEntity> {
-    return this.userService.getUserByName(userName);
-  }
-
   @Get('likedArticles')
   @HttpCode(HttpStatus.OK)
   getLikedArticlesIds(@GetCurrentUserId() userId: string): Promise<string[]> {

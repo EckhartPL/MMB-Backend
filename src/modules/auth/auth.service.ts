@@ -77,12 +77,10 @@ export class AuthService {
     };
   }
 
-  async register(data: RegisterDto): Promise<Tokens> {
+  async register(data: RegisterDto): Promise<Tokens | null> {
     let user = await UserEntity.findOneBy({ email: data.email });
     if (user) {
-      throw new ForbiddenException(
-        'Account with provided email already exists.',
-      );
+      return null;
     }
 
     user = new UserEntity();
