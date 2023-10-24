@@ -20,7 +20,7 @@ export class UploadEntity extends BaseEntity implements UploadsInterface {
     length: 255,
     nullable: false,
   })
-  fileOriginalName: string;
+  fileName: string;
 
   @Column({
     type: 'varchar',

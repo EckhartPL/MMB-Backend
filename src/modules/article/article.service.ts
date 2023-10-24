@@ -22,6 +22,7 @@ export class ArticleService {
       .createQueryBuilder()
       .from(ArticleEntity, 'article')
       .leftJoinAndSelect('article.user', 'user')
+      .leftJoinAndSelect('user.profilePicture', 'profilePicture')
       .skip(maxPerPage * (currentPage - 1))
       .take(maxPerPage)
       .select([
@@ -32,7 +33,7 @@ export class ArticleService {
         'article.likes',
         'user.id',
         'user.name',
-        'user.profilePictureUrl',
+        'profilePicture.url',
       ])
       .orderBy('article.createdAt', 'DESC')
       .getManyAndCount();
@@ -54,6 +55,10 @@ export class ArticleService {
       description,
       user,
     }).save();
+  }
+
+  async deleteArticle(articleId: string): Promise<void> {
+    await ArticleEntity.delete(articleId);
   }
 
   getArticleById(articleId: string): Promise<ArticleEntity> {

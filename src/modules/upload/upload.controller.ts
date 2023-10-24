@@ -2,16 +2,16 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
-  Logger,
   Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerOptions } from 'src/config/multerOptions.config';
 
+import { UploadEntity } from './entities';
 import { UploadService } from './upload.service';
 
+import { multerOptions } from '../../config/multerOptions.config';
 import { GetCurrentUserId } from '../../decorators';
 
 @Controller('upload')
@@ -24,8 +24,7 @@ export class UploadController {
   uploadProfilePicture(
     @UploadedFile() file: Express.Multer.File,
     @GetCurrentUserId() userId: string,
-  ): Promise<string> {
-    Logger.log(file);
+  ): Promise<UploadEntity> {
     return this.uploadService.uploadProfilePicture(file, userId);
   }
 }

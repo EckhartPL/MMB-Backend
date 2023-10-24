@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { hashPwd } from 'src/utils/hash-pwd';
 import { LoginResponse, Tokens, UserObj } from 'types';
 
+import { jwtConstants } from './constants';
 import { AuthLoginDto } from './dto/auth-login.dto';
 
 import { RegisterDto } from '../user/dto/register.dto';
@@ -31,10 +32,11 @@ export class AuthService {
       },
       relations: {
         likedArticles: true,
+        profilePicture: true,
       },
     });
 
-    if (!user) throw new ForbiddenException('Access Denied!');
+    if (!user) return null;
     this.validateUser(dto.email, dto.password);
     delete user.pwdHash;
     delete user.hashedRt;
@@ -57,7 +59,7 @@ export class AuthService {
         },
         {
           secret: process.env.SECRET_AT,
-          expiresIn: 60 * 15,
+          expiresIn: jwtConstants.atExpiresIn,
         },
       ),
       this.jwtService.signAsync(
@@ -67,7 +69,7 @@ export class AuthService {
         },
         {
           secret: process.env.SECRET_RT,
-          expiresIn: 60 * 60 * 24 * 7,
+          expiresIn: jwtConstants.rtExpiresIn,
         },
       ),
     ]);
@@ -111,9 +113,9 @@ export class AuthService {
   async refreshTokens(userId: string, rt: string): Promise<Tokens> {
     const user = await UserEntity.findOneBy({ id: userId });
     if (!user || !user.hashedRt) throw new ForbiddenException('Access Denied!');
-    // console.log(user.hashedRt, '\nrt:\n', rt.slice(7));
-    const rtMatches = await argon.verify(user.hashedRt, rt.slice(7));
-    // console.log('\nrtMatches:\n', rtMatches);
+    // const rtMatches = await argon.verify(user.hashedRt, rt.slice(7));
+    const rtMatches = await argon.verify(user.hashedRt, rt);
+    Logger.log(rtMatches);
     if (!rtMatches)
       throw new ForbiddenException('Refresh Token does not match!');
     const tokens = await this.getTokens(user.id, user.email);

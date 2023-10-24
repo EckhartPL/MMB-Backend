@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import {
@@ -62,6 +63,13 @@ export class ArticleController {
     @GetCurrentUserId() userId: string,
   ): Promise<void> {
     return this.articleService.createArticle(createArticle, userId);
+  }
+
+  @Delete('/delete')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteArticle(articleId: string): Promise<void> {
+    await this.articleService.deleteArticle(articleId);
   }
 
   @Post('/like/:likedArticleId')

@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'error',
     '@typescript-eslint/no-explicit-any': 'error',
+    'eslint/no-return-await': 'off',
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -53,7 +54,6 @@ module.exports = {
     'no-nested-ternary': 'warn',
     'no-unneeded-ternary': 'error',
     'no-useless-concat': 'error',
-    'no-return-await': 'error',
     'prefer-destructuring': 'error',
     'prefer-object-spread': 'error',
     'prefer-template': 'error',

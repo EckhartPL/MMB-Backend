@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage } from 'firebase/storage';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: 'AIzaSyC10FzYgs92zUvWX9ZE4IePO0FyiQvJpUg',
   authDomain: 'mmb-storage.firebaseapp.com',
   projectId: 'mmb-storage',
