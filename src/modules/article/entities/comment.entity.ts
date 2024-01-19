@@ -5,13 +5,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CommentInterface } from 'types';
 
 import { ArticleEntity } from './article.entity';
 
 import { UserEntity } from '../../../modules/user/entities/user.entity';
 
 @Entity()
-export class CommentEntity extends BaseEntity {
+export class CommentEntity extends BaseEntity implements CommentInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

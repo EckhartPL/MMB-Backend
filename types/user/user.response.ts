@@ -18,3 +18,7 @@ export interface UserResponse {
   article?: ArticleEntity[];
   profilePicture?: UploadEntity;
 }
+
+export interface UserUpdateResponse {
+  exists: boolean;
+}

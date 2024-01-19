@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { UserInterface } from 'types';
 
 export interface ArticleInterface {
   id: string;
@@ -6,7 +6,7 @@ export interface ArticleInterface {
   description: string;
   createdAt: Date;
   likes: number;
-  user: UserEntity;
+  user: UserInterface;
 }
 
 export interface LikeArticleId {

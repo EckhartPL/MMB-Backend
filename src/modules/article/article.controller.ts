@@ -13,14 +13,25 @@ import {
   CommentResponse,
   LikesResponse,
   GetPaginatedListOfArticlesResponse,
+  PaginatedResource,
 } from 'types';
 
 import { ArticleService } from './article.service';
 import { CommentService } from './comment.service';
 import { CreateArticleDto } from './dto/create-article.dto';
+import { ArticleEntity } from './entities';
 import { LikeService } from './like.service';
 
-import { GetCurrentUserId, Public } from '../../decorators';
+import {
+  Filtering,
+  FilteringParams,
+  GetCurrentUserId,
+  Pagination,
+  PaginationParams,
+  Public,
+  Sorting,
+  SortingParams,
+} from '../../decorators';
 import { ValidatePagePipe } from '../../pipes/validate-page.pipe';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -44,6 +55,21 @@ export class ArticleController {
   @Get('comments/count/:articleId')
   commentsCounter(@Param('articleId') articleId: string): Promise<number> {
     return this.commentService.commentsCount(articleId);
+  }
+
+  @Public()
+  @Get('/search')
+  @HttpCode(HttpStatus.OK)
+  public async searchArticles(
+    @PaginationParams() paginationParams: Pagination,
+    @SortingParams(['title', 'createdAt', 'likes']) sort?: Sorting,
+    @FilteringParams(['title', 'createdAt', 'likes']) filter?: Filtering,
+  ): Promise<PaginatedResource<Partial<ArticleEntity>>> {
+    return await this.articleService.searchArticles(
+      paginationParams,
+      sort,
+      filter,
+    );
   }
 
   @Public()

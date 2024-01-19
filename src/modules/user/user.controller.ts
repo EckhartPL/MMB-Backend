@@ -1,5 +1,14 @@
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
+import { UserUpdateResponse } from 'types';
 
+import { UpdateUserDto } from './dto/update.dto';
 import { UserService } from './user.service';
 
 import { GetCurrentUserId } from '../../decorators';
@@ -11,5 +20,14 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   getLikedArticlesIds(@GetCurrentUserId() userId: string): Promise<string[]> {
     return this.userService.getLikedArticlesIds(userId);
+  }
+
+  @Patch('/update')
+  @HttpCode(HttpStatus.OK)
+  updateUserInfo(
+    @GetCurrentUserId() userId: string,
+    @Body() updatedInfo: UpdateUserDto,
+  ): Promise<UserUpdateResponse> {
+    return this.userService.updateUserInfo(userId, updatedInfo);
   }
 }

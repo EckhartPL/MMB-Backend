@@ -1,9 +1,16 @@
-import { CommentEntity } from '../../src/modules/article/entities/comment.entity';
+import { ArticleInterface, UserInterface } from 'types';
 
 export interface CommentResponse {
-  items: CommentEntity[];
+  items: CommentInterface[];
   pagesCount?: number;
   currentPage?: number;
+}
+
+export interface CommentInterface {
+  id: string;
+  content: string;
+  user: UserInterface;
+  article: ArticleInterface;
 }
 
 export interface CommentsCountResponse {

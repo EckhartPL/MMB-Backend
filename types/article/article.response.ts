@@ -1,7 +1,7 @@
 import { ArticleInterface } from 'types';
 
 export interface GetPaginatedListOfArticlesResponse {
-  items: ArticleInterface[];
+  articles: ArticleInterface[];
   pagesCount: number;
   currentPage: number;
 }

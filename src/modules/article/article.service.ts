@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Filtering, Pagination, Sorting } from 'src/decorators';
+import { getOrder, getWhere } from 'src/utils';
 import { DataSource } from 'typeorm';
-import { GetPaginatedListOfArticlesResponse } from 'types';
+import { GetPaginatedListOfArticlesResponse, PaginatedResource } from 'types';
 
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entities/article.entity';
@@ -18,7 +20,7 @@ export class ArticleService {
     currentPage < 1 ? (currentPage = 1) : currentPage;
     const maxPerPage = 9;
 
-    const [items, count] = await this.dataSource
+    const [articles, count] = await this.dataSource
       .createQueryBuilder()
       .from(ArticleEntity, 'article')
       .leftJoinAndSelect('article.user', 'user')
@@ -38,10 +40,12 @@ export class ArticleService {
       .orderBy('article.createdAt', 'DESC')
       .getManyAndCount();
 
+    const pagesCount = Math.ceil(count / maxPerPage);
+
     return {
-      items,
-      pagesCount: Math.ceil(count / maxPerPage),
-      currentPage: currentPage > count ? (currentPage = 1) : currentPage,
+      articles,
+      pagesCount,
+      currentPage: currentPage > pagesCount ? (currentPage = 1) : currentPage,
     };
   }
 
@@ -63,5 +67,49 @@ export class ArticleService {
 
   getArticleById(articleId: string): Promise<ArticleEntity> {
     return ArticleEntity.findOneBy({ id: articleId });
+  }
+
+  // eslint-disable-next-line max-lines-per-function
+  async searchArticles(
+    { page, limit, size, offset }: Pagination,
+    sort?: Sorting,
+    filter?: Filtering,
+  ): Promise<PaginatedResource<Partial<ArticleEntity>>> {
+    const where = getWhere(filter);
+    const order = JSON.stringify(getOrder(sort));
+
+    const [articles, total] = await this.dataSource
+      .createQueryBuilder()
+      .from(ArticleEntity, 'article')
+      .leftJoinAndSelect('article.user', 'user')
+      .leftJoinAndSelect('user.profilePicture', 'profilePicture')
+      .skip(offset)
+      .take(limit)
+      .where(where)
+      .select([
+        'article.id',
+        'article.title',
+        'article.description',
+        'article.createdAt',
+        'article.likes',
+        'user.id',
+        'user.name',
+        'profilePicture.url',
+      ])
+      .orderBy(
+        `article.${sort.property}`,
+        sort.direction.toUpperCase() as 'ASC' | 'DESC',
+      )
+      .getManyAndCount();
+
+    Logger.warn(total, page, size, order);
+
+    return {
+      totalItems: total,
+      items: articles,
+      page,
+      size,
+      order,
+    };
   }
 }
